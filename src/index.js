@@ -23,7 +23,7 @@ app.use(cors(corsOptions));
 
 // Set view engine
 app.set('view engine', 'ejs');
-app.set('views', './src/views'); // Ensure this path is correct relative to your project structure
+app.set('views', './views'); // Ensure this path is correct relative to your project structure
 
 // Root route
 app.get('/', (req, res) => {
