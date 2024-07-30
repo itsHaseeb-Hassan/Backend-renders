@@ -16,12 +16,14 @@ const createUser = async (req, res, next) => {
     console.log("Received input:", name, email, password, profileImage);
 
     if (!name || !email || !password || !profileImage) {
+        res.send({status: 400, message: "All Fields Are Required"});
         return next(createHttpError(400, "All Fields Are Required"));
     }
 
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
+            res.send({status: 400, message: "User Already Exists"});
             return next(createHttpError(400, "User Already Exists"));
         }
 
@@ -33,6 +35,7 @@ const createUser = async (req, res, next) => {
             });
         } catch (error) {
             console.error('Image Upload Error:', error);
+            res.send({status: 500, message: "Image Upload Failed"});
             return next(createHttpError(500, "Image Upload Failed"));
         }
 
@@ -46,6 +49,7 @@ const createUser = async (req, res, next) => {
             console.log("Email sent successfully");
         } catch (emailError) {
             console.error('Email Sending Error:', emailError);
+            res.send({status: 500, message: "Email Sending Failed"});
             return next(createHttpError(500, "Email Sending Failed"));
         }
 
@@ -63,13 +67,15 @@ const createUser = async (req, res, next) => {
 
             console.log("New user created successfully:", newUser);
 
-            res.status(200).json({ id: newUser._id });
+            res.status(200).json({ id: newUser._id , message: "User Created Successfully"});
         } catch (hashError) {
             console.error('User Creation Error:', hashError);
+            res.send({status: 500, message: "User Creation Failed"});
             return next(createHttpError(500, "User Creation Failed"));
         }
     } catch (error) {
         console.error('User Creation Error:', error);
+        res.send({status: 500, message: "User Creation Failed"});
         return next(createHttpError(500, "User Creation Failed"));
     }
 };
@@ -80,11 +86,13 @@ const loginUser = async (req, res, next) => {
     try {
         const existingUser = await User.findOne({ email });
         if (!existingUser) {
+            res.send({status: 400, message: "User Does Not Exist"});
             return res.status(400).json({ message: "User Does Not Exist" });
         }
 
         const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
         if (!isPasswordCorrect) {
+            res.send({status: 400, message: "Wrong Password"});
             return next(createHttpError(400, "Wrong Password"));
         }
 
@@ -96,6 +104,7 @@ const loginUser = async (req, res, next) => {
         res.status(200).json({ id: existingUser._id, name: existingUser.name, profileImage: existingUser.profileImage, accessToken, refreshToken, isLoggedIn: true, isVerified: existingUser.isVerified, status: 200 });
     } catch (error) {
         console.error('Login Error:', error);
+        res.send({status: 500, message: "Login Failed"});
         return next(createHttpError(500, "Login Failed"));
     }
 };
