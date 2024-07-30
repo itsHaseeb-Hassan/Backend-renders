@@ -26,7 +26,7 @@ const sendEmail = async (email, verificationToken) => {
         await transporter.sendMail({
             from: `"No Reply" <${process.env.SMTP_EMAIL}>`,
             to: email,
-            subject: subject || "Verify your email",
+            subject: subject || "Verify your email address",
             text: message,
         });
 
