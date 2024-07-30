@@ -30,11 +30,6 @@ app.get('/', (req, res) => {
     res.send('Hello this is my Todo Application'); 
 });
 
-// Add a route to render the verified.ejs view
-app.get('/verified', (req, res) => {
-    res.render('verified'); // This should match the file name in src/views
-});
-
 // API routes
 app.use('/api/users', userRouter);
 app.use('/api/todos', todoRouter);
